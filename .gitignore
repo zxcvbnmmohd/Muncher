@@ -1,0 +1,138 @@
+# Django
+*.log
+*.pot
+*.pyc
+__pycache__
+db.sqlite3
+media
+
+# env
+.env.development
+.env.production
+.env.staging
+
+# Backup Files
+*.bak
+
+# AWS User-Specific
+.idea/**/aws.xml
+
+# Generated Files
+.idea/**/contentModel.xml
+
+# Sensitive or High-Churn Files
+.idea/**/dataSources/
+.idea/**/dataSources.ids
+.idea/**/dataSources.local.xml
+.idea/**/sqlDataSources.xml
+.idea/**/dynamic.xml
+.idea/**/uiDesigner.xml
+.idea/**/dbnavigator.xml
+
+# Gradle
+.idea/**/gradle.xml
+.idea/**/libraries
+
+# File-Based Project Format
+*.iws
+
+# IntelliJ
+out/
+
+# JIRA Plugin
+atlassian-ide-plugin.xml
+
+# Python
+*.py[cod]
+*$py.class
+
+# Distribution / Packaging
+.Pythonbuild/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+*.manifest
+*.spec
+
+# Installer Logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit Rest / Coverage Reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+.pytest_cache/
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# celery
+celerybeat-schedule.*
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+
+# sftp configuration file
+sftp-config.json
+
+# Package control specific files Package
+Control.last-run
+Control.ca-list
+Control.ca-bundle
+Control.system-ca-bundle
+GitHub.sublime-settings
+
+# Misc
+.DS_Store
+
+# Android
+frontend/android/*.iml
+frontend/android/.gradle
+frontend/android/local.properties
+frontend/android/.idea/caches
+frontend/android/.idea/libraries
+frontend/android/.idea/modules.xml
+frontend/android/.idea/workspace.xml
+frontend/android/.idea/navEditor.xml
+frontend/android/.idea/assetWizardSettings.xml
+frontend/android/build
+frontend/android/captures
+frontend/android/.externalNativeBuild
+frontend/android/.cxx
+frontend/android/local.properties
