@@ -9,7 +9,6 @@ django-environ = "*"
 django-tailwindcss = "*"
 
 [dev-packages]
-importanize = "*"
 pycodestyle = "*"
 
 [requires]

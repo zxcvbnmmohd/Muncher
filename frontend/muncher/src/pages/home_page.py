@@ -1,6 +1,5 @@
 import flet as ft
-
-from ..models import user_model
+from muncher.src.models import user_model
 
 
 def home_page(page: ft.Page):
@@ -9,7 +8,7 @@ def home_page(page: ft.Page):
 
     user = user_model.User(first_name="Mohamed", last_name="Mohamed")
 
-    txt_name = user.first_name
+    txt_name = f"{user.first_name} {user.last_name}"
     txt_number = ft.TextField(value="0", text_align=ft.TextAlign.RIGHT, width=100)
 
     def minus_click(e):
@@ -33,6 +32,6 @@ def home_page(page: ft.Page):
                     alignment=ft.MainAxisAlignment.CENTER,
                 ),
             ],
-            horizontal_alignment=ft.CrossAxisAlignment.STRETCH,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         )
     )
