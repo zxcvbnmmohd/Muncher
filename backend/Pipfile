@@ -5,8 +5,9 @@ name = "pypi"
 
 [packages]
 django = "*"
+django-browser-reload = "*"
 django-environ = "*"
-django-tailwindcss = "*"
+django-tailwind = "*"
 
 [dev-packages]
 pycodestyle = "*"
