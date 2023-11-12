@@ -1,6 +1,3 @@
-from datetime import datetime
-from typing import List, Optional
-
 from django.contrib.auth.models import User
 from django.db.models import (
     CASCADE,
@@ -19,12 +16,26 @@ from django.db.models import (
 )
 
 
+def user_directory(instance):
+    return "users/{0}/selfie.png".format(instance.user.id)
+
+
+def business_directory(instance):
+    return "businesses/{0}/logo.png".format(instance.business.id)
+
+
+def product_directory(instance):
+    return "businesses/{0}/products/{1}/image.png".format(
+        instance.business.id, instance.id
+    )
+
+
 class Address(Model):
-    street: str = CharField(max_length=255)
-    city: str = CharField(max_length=100)
-    state: str = CharField(max_length=100)
-    postal_code: str = CharField(max_length=20)
-    country: str = CharField(max_length=100)
+    street = CharField(max_length=255)
+    city = CharField(max_length=100)
+    state = CharField(max_length=100)
+    postal_code = CharField(max_length=20)
+    country = CharField(max_length=100)
 
     def __str__(self):
         return (
@@ -34,10 +45,10 @@ class Address(Model):
 
 
 class UserProfile(Model):
-    user: User = OneToOneField(User, on_delete=CASCADE)
-    avatar: ImageField = ImageField(upload_to=f"users/{user.email}/selfie/")
-    phone: str = CharField(max_length=20, blank=True)
-    address: Optional[Address] = ForeignKey(
+    user = OneToOneField(User, on_delete=CASCADE)
+    selfie = ImageField(upload_to=user_directory)
+    phone = CharField(max_length=20, blank=True)
+    address = ForeignKey(
         Address,
         on_delete=SET_NULL,
         null=True,
@@ -49,8 +60,8 @@ class UserProfile(Model):
 
 
 class Category(Model):
-    name: str = CharField(max_length=100)
-    description: str = TextField(blank=True)
+    name = CharField(max_length=100)
+    description = TextField(blank=True)
 
     def __str__(self):
         return self.name
@@ -64,59 +75,59 @@ class Business(Model):
         ("clothing", "Clothing"),
         ("other", "Other"),
     )
-    name: str = CharField(max_length=255)
-    description: str = TextField()
-    address: Optional[Address] = ForeignKey(
+    name = CharField(max_length=255)
+    description = TextField()
+    address = ForeignKey(
         Address,
         on_delete=SET_NULL,
         null=True,
         blank=True,
     )
-    contact_number: str = CharField(max_length=20)
-    owner: User = ForeignKey(User, on_delete=CASCADE)
-    business_type: str = CharField(
+    contact_number = CharField(max_length=20)
+    owner = ForeignKey(User, on_delete=CASCADE)
+    business_type = CharField(
         max_length=20,
         choices=BUSINESS_TYPE_CHOICES,
     )
-    logo: ImageField = ImageField(upload_to="business_logos/")
-    created_at: datetime = DateTimeField(auto_now_add=True)
-    updated_at: datetime = DateTimeField(auto_now=True)
+    logo = ImageField(upload_to=business_directory)
+    created_at = DateTimeField(auto_now_add=True)
+    updated_at = DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
 
 
 class Product(Model):
-    name: str = CharField(max_length=255)
-    description: str = TextField()
-    price: float = DecimalField(max_digits=10, decimal_places=2)
-    business: Business = ForeignKey(Business, on_delete=CASCADE)
-    image: ImageField = ImageField(upload_to="product_images/")
-    categories: List[Category] = ManyToManyField(Category, related_name="products")
-    created_at: datetime = DateTimeField(auto_now_add=True)
-    updated_at: datetime = DateTimeField(auto_now=True)
+    name = CharField(max_length=255)
+    description = TextField()
+    price = DecimalField(max_digits=10, decimal_places=2)
+    business = ForeignKey(Business, on_delete=CASCADE)
+    image = ImageField(upload_to=product_directory)
+    categories = ManyToManyField(Category, related_name="products")
+    created_at = DateTimeField(auto_now_add=True)
+    updated_at = DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
 
 
 class Promotion(Model):
-    name: str = CharField(max_length=100)
-    description: str = TextField()
-    business: Business = ForeignKey(Business, on_delete=CASCADE)
-    start_date: datetime = DateTimeField()
-    end_date: datetime = DateTimeField()
-    discount: float = DecimalField(max_digits=5, decimal_places=2)
+    name = CharField(max_length=100)
+    description = TextField()
+    business = ForeignKey(Business, on_delete=CASCADE)
+    start_date = DateTimeField()
+    end_date = DateTimeField()
+    discount = DecimalField(max_digits=5, decimal_places=2)
 
     def __str__(self):
         return self.name
 
 
 class ProductVariation(Model):
-    product: Product = ForeignKey(Product, on_delete=CASCADE)
-    name: str = CharField(max_length=100)
-    price: float = DecimalField(max_digits=10, decimal_places=2)
-    is_available: bool = BooleanField(default=True)
+    product = ForeignKey(Product, on_delete=CASCADE)
+    name = CharField(max_length=100)
+    price = DecimalField(max_digits=10, decimal_places=2)
+    is_available = BooleanField(default=True)
 
     def __str__(self):
         return self.name
@@ -130,40 +141,39 @@ class Order(Model):
         ("DELIVERED", "Delivered"),
     )
 
-    id: PositiveIntegerField = PositiveIntegerField(primary_key=True)
-    customer: User = ForeignKey(User, on_delete=CASCADE)
-    business: Business = ForeignKey(Business, on_delete=CASCADE)
-    driver: Optional[User] = ForeignKey(User, on_delete=SET_NULL, blank=True, null=True)
-    address: Optional[Address] = ForeignKey(
-        Address, on_delete=SET_NULL, null=True, blank=True
+    business = ForeignKey(Business, on_delete=CASCADE)
+    customer = ForeignKey(User, on_delete=CASCADE, related_name="customer_orders")
+    driver = ForeignKey(
+        User, on_delete=SET_NULL, blank=True, null=True, related_name="driver_orders"
     )
-    total_price: float = DecimalField(max_digits=10, decimal_places=2)
-    status: str = CharField(max_length=20, choices=STATUS_CHOICES)
-    created_at: datetime = DateTimeField(auto_now_add=True)
-    updated_at: datetime = DateTimeField(auto_now=True)
-    picked_at: Optional[datetime] = DateTimeField(blank=True, null=True)
+    address = ForeignKey(Address, on_delete=SET_NULL, null=True, blank=True)
+    price = DecimalField(max_digits=10, decimal_places=2)
+    status = CharField(max_length=20, choices=STATUS_CHOICES)
+    created_at = DateTimeField(auto_now_add=True)
+    updated_at = DateTimeField(auto_now=True)
+    picked_at = DateTimeField(blank=True, null=True)
 
     def __str__(self):
         return f"Order #{self.id}"
 
 
 class OrderItem(Model):
-    order: Order = ForeignKey(Order, on_delete=CASCADE)
-    product: Product = ForeignKey(Product, on_delete=CASCADE)
-    quantity: PositiveIntegerField = PositiveIntegerField()
-    subtotal: float = DecimalField(max_digits=10, decimal_places=2)
-    created_at: datetime = DateTimeField(auto_now_add=True)
-    updated_at: datetime = DateTimeField(auto_now=True)
+    order = ForeignKey(Order, on_delete=CASCADE)
+    product = ForeignKey(Product, on_delete=CASCADE)
+    quantity = PositiveIntegerField()
+    subtotal = DecimalField(max_digits=10, decimal_places=2)
+    created_at = DateTimeField(auto_now_add=True)
+    updated_at = DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"Order Item for Order #{self.order}"
 
 
 class DriverLocation(Model):
-    driver: User = ForeignKey(User, on_delete=CASCADE)
-    latitude: float = DecimalField(max_digits=9, decimal_places=6)
-    longitude: float = DecimalField(max_digits=9, decimal_places=6)
-    timestamp: datetime = DateTimeField(auto_now=True)
+    driver = ForeignKey(User, on_delete=CASCADE)
+    latitude = DecimalField(max_digits=9, decimal_places=6)
+    longitude = DecimalField(max_digits=9, decimal_places=6)
+    timestamp = DateTimeField(auto_now=True)
 
 
 class Payment(Model):
@@ -175,17 +185,17 @@ class Payment(Model):
         ("google_pay", "Google Pay"),
     )
 
-    user: User = ForeignKey(User, on_delete=CASCADE)
+    user = ForeignKey(User, on_delete=CASCADE)
     payment_method: str = CharField(max_length=20, choices=PAYMENT_METHOD_CHOICES)
     billing_info: str = TextField()
-    created_at: datetime = DateTimeField(auto_now_add=True)
-    updated_at: datetime = DateTimeField(auto_now=True)
+    created_at = DateTimeField(auto_now_add=True)
+    updated_at = DateTimeField(auto_now=True)
 
 
 class Review(Model):
-    reviewer: User = ForeignKey(User, on_delete=CASCADE)
-    business: Business = ForeignKey(Business, on_delete=CASCADE)
-    rating: PositiveIntegerField = PositiveIntegerField()
+    reviewer = ForeignKey(User, on_delete=CASCADE)
+    business = ForeignKey(Business, on_delete=CASCADE)
+    rating = PositiveIntegerField()
     comments: str = TextField()
-    created_at: datetime = DateTimeField(auto_now_add=True)
-    updated_at: datetime = DateTimeField(auto_now=True)
+    created_at = DateTimeField(auto_now_add=True)
+    updated_at = DateTimeField(auto_now=True)
